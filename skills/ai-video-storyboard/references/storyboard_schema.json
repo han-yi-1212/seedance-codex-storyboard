@@ -1,0 +1,175 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IndustrialAIVideoStoryboardShotV2",
+  "description": "工业级 AI 视频微短剧分镜单镜头数据结构规范 v2.0 (融合商业短剧钩子、6大对话视觉引擎与大师导演视听风格)，支持 ComfyUI、剪映草稿及自动化 API 生产流水线",
+  "type": "object",
+  "required": [
+    "shot_id",
+    "scene_id",
+    "timestamp_start",
+    "timestamp_end",
+    "duration_seconds",
+    "shot_type",
+    "camera_angle",
+    "camera_movement",
+    "axis_side",
+    "characters",
+    "character_positions",
+    "character_actions",
+    "character_emotions",
+    "visual_description_cn",
+    "img_prompt_en",
+    "motion_prompt_en",
+    "audio_design"
+  ],
+  "properties": {
+    "shot_id": {
+      "type": "string",
+      "pattern": "^[0-9]{2}$",
+      "description": "镜头序号 (如 '01', '02')",
+      "example": "01"
+    },
+    "scene_id": {
+      "type": "string",
+      "description": "场景唯一标识符",
+      "example": "SC01"
+    },
+    "timestamp_start": {
+      "type": "string",
+      "pattern": "^[0-9]{2}:[0-9]{2}$",
+      "example": "00:00"
+    },
+    "timestamp_end": {
+      "type": "string",
+      "pattern": "^[0-9]{2}:[0-9]{2}$",
+      "example": "00:02"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 5.0,
+      "description": "单镜头时长 (秒)。微短剧快节奏推荐 1.0~2.5s，长镜头上限 5.0s",
+      "example": 2.5
+    },
+    "shot_type": {
+      "type": "string",
+      "enum": ["ELS", "WS", "MWS", "MS", "MCU", "CU", "ECU"],
+      "description": "标准景别代号"
+    },
+    "camera_angle": {
+      "type": "string",
+      "enum": ["eye_level", "low_angle", "high_angle", "dutch_angle", "overhead_bird_eye", "ground_level"],
+      "description": "摄影机机位垂直/水平视角"
+    },
+    "camera_movement": {
+      "type": "string",
+      "enum": ["static", "dolly_in", "dolly_out", "pan_left", "pan_right", "tilt_up", "tilt_down", "tracking", "arc_orbit", "handheld", "crane", "whip_pan"],
+      "description": "摄影机运镜方式"
+    },
+    "camera_movement_speed": {
+      "type": "string",
+      "enum": ["subtle", "slow", "moderate", "fast", "whip"],
+      "description": "运镜速度"
+    },
+    "axis_side": {
+      "type": "string",
+      "description": "180° 轴线安全半圆方向标识 (如 'west_side' 或 'camera_locked_south')",
+      "example": "south_interior"
+    },
+    "characters": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "本镜头画面中出场的所有角色姓名"
+    },
+    "character_positions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "各角色在画面中的屏幕坐标与视线朝向",
+      "example": { "安澜": "frame-left, facing-right towards door" }
+    },
+    "character_actions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "各角色的单一微动作 (Single Micro-action)",
+      "example": { "安澜": "fingers swiftly yank USB stick straight from slot" }
+    },
+    "character_emotions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "各角色的心理状态与微表情外化",
+      "example": { "安澜": "hyper-vigilant, dilated pupils, breath held" }
+    },
+    "emotion_expression_type": {
+      "type": "string",
+      "enum": ["facial_closeup", "hand_micro_action", "body_posture_tension", "neutral", "none"],
+      "description": "情绪外化表达形式"
+    },
+    "visual_engine": {
+      "type": "string",
+      "enum": ["props", "distance", "environment", "task", "secret", "observer", "none"],
+      "description": "6 大对话视觉化引擎 (道具/距离/空间/任务/秘密/观察者)"
+    },
+    "hook_type": {
+      "type": "string",
+      "enum": ["mortal_peril", "violent_conflict", "cognitive_disruption", "visual_spectacle", "identity_reversal", "none"],
+      "description": "短剧黄金前 3 秒钩子类型"
+    },
+    "director_style": {
+      "type": "string",
+      "description": "20 位世界大师导演视听文法风格 (如 'David Fincher', 'Wong Kar-wai', 'Denis Villeneuve', 'Bong Joon-ho')",
+      "example": "David Fincher"
+    },
+    "visual_description_cn": {
+      "type": "string",
+      "description": "中文镜头画面与动作视听描述 (单微动态)"
+    },
+    "dialogue_or_narration": {
+      "type": "object",
+      "properties": {
+        "speaker": { "type": "string" },
+        "subtext_tone": { "type": "string" },
+        "content": { "type": "string" }
+      },
+      "description": "台词或旁白 (若无台词则 content 为空)"
+    },
+    "consistency_references": {
+      "type": "object",
+      "properties": {
+        "character_ref_urls": { "type": "array", "items": { "type": "string" } },
+        "cw_weight": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "style_ref_url": { "type": "string" }
+      },
+      "description": "现代多模态参考资产库控制参数 (MJ --cref / --sref 或 I2V 首帧 URL)"
+    },
+    "img_prompt_en": {
+      "type": "string",
+      "description": "Midjourney / Flux 起始帧生图提示词 (含角色/场景锚点与画幅参数)"
+    },
+    "motion_prompt_en": {
+      "type": "string",
+      "description": "Runway / Kling / MiniMax 运动控制提示词 (含平台官方运动控制参数)"
+    },
+    "audio_design": {
+      "type": "object",
+      "required": ["ambience", "foley", "sfx", "bgm"],
+      "properties": {
+        "ambience": { "type": "string", "description": "环境底噪" },
+        "foley": { "type": "string", "description": "动作拟音" },
+        "sfx": { "type": "string", "description": "音效" },
+        "bgm": { "type": "string", "description": "配乐状态与强弱记号" }
+      }
+    },
+    "validation_status": {
+      "type": "object",
+      "properties": {
+        "duration_pass": { "type": "boolean" },
+        "axis_pass": { "type": "boolean" },
+        "emotion_closeup_pass": { "type": "boolean" },
+        "single_micro_action_pass": { "type": "boolean" },
+        "continuity_pass": { "type": "boolean" },
+        "speech_rate_pass": { "type": "boolean" },
+        "rhythm_waveform_pass": { "type": "boolean" }
+      }
+    }
+  }
+}
